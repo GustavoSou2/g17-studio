@@ -1,0 +1,22 @@
+.group:hover > .hero-cards {
+  @apply rotate-0;
+}
+
+/* Para o efeito de animação de "desenho" da linha do gráfico.
+   No Angular, isso deve ser feito em um arquivo de estilos global
+   ou usando uma estratégia que permita animações de SVG. */
+
+/* Exemplo de Estilo para Simulação de Animação */
+.graph-animation {
+  /* Inicialmente, a linha tem comprimento 0 */
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 3s ease-in-out forwards; /* Animação de 3 segundos */
+}
+
+/* Keyframes da Animação */
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}

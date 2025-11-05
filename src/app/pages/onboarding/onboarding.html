@@ -1,0 +1,186 @@
+<section id="scheduling" class="w-full h-screen overflow-x-hidden bg-soft relative">
+  <img
+    [src]="'./svg/background-blur-texture.svg'"
+    alt="Backgound red"
+    (click)="nav('/')"
+    class="absolute top-0 left-[50%] transform translate-x-[-50%] w-auto h-full m-auto object-cover z-0"
+  />
+  <section class="w-full absolute flex justify-center z-10">
+    <section class="h-[70px] w-full max-w-7xl m-auto flex justify-between px-2 items-center">
+      <img [src]="'./svg/g17.svg'" alt="logo g17" class="h-full object-contain" />
+      <button
+        (click)="nav('/')"
+        class="p-1 px-12 h-fit rounded-md font-poppins bg-obsidian/5 hover:bg-obsidian/10 text-lg border border-obsidian text-obsidian"
+      >
+        Voltar
+      </button>
+    </section>
+  </section>
+  <section
+    class="min-h-screen font-poppins flex flex-col justify-center items-center bg-slate-50 px-4"
+  >
+    <!-- Card principal -->
+    <div
+      class="bg-white w-full max-w-2xl rounded-md p-8 relative overflow-hidden transition-all duration-500"
+    >
+      <!-- Header -->
+      <h1 class="text-3xl font-semibold mb-2 text-slate-800">
+        {{ steps[currentStep].title }}
+      </h1>
+      <p class="text-slate-500 mb-6">
+        {{ steps[currentStep].subtitle }}
+      </p>
+
+      <!-- Formulário -->
+      <form [formGroup]="form" (ngSubmit)="nextStep()">
+        <div class="space-y-4">
+          <ng-container [ngSwitch]="currentStep">
+            <!-- Etapa 1 -->
+            <div *ngSwitchCase="0" class="flex flex-col gap-4">
+              <label class="block">
+                <span class="text-slate-700 font-medium">Nome completo</span>
+                <input
+                  formControlName="name"
+                  type="text"
+                  placeholder="Fulano"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                />
+              </label>
+              <label class="block">
+                <span class="text-slate-700 font-medium">E-mail</span>
+                <input
+                  formControlName="email"
+                  type="email"
+                  placeholder="fulano@gmail.com"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                />
+              </label>
+              <label class="block">
+                <span class="text-slate-700 font-medium">Telefone</span>
+                <input
+                  formControlName="phone"
+                  type="text"
+                  placeholder="(19) 99999-9999"
+                  phoneMask
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                />
+              </label>
+            </div>
+
+            <!-- Etapa 2 -->
+            <div *ngSwitchCase="1" class="flex flex-col gap-4">
+              <label class="block">
+                <span class="text-slate-700 font-medium">Nome da empresa</span>
+                <input
+                  formControlName="company"
+                  type="text"
+                  placeholder="Fulano LTDA"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                />
+              </label>
+              <label class="block">
+                <span class="text-slate-700 font-medium">Setor de atuação</span>
+                <input
+                  formControlName="industry"
+                  type="text"
+                  placeholder="Tecnologia"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                />
+              </label>
+              <label class="block">
+                <span class="text-slate-700 font-medium">Possui site atualmente?</span>
+                <select
+                  formControlName="hasWebsite"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                >
+                  <option value="">Selecione</option>
+                  <option value="yes">Sim</option>
+                  <option value="no">Não</option>
+                </select>
+              </label>
+            </div>
+
+            <!-- Etapa 3 -->
+            <div *ngSwitchCase="2" class="flex flex-col gap-4">
+              <label class="block">
+                <span class="text-slate-700 font-medium"
+                  >Qual seu principal objetivo com o site?</span
+                >
+                <textarea
+                  formControlName="goal"
+                  rows="3"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                ></textarea>
+              </label>
+              <label class="block">
+                <span class="text-slate-700 font-medium"
+                  >Como os clientes chegam até você hoje?</span
+                >
+                <textarea
+                  formControlName="acquisition"
+                  rows="3"
+                  class="mt-1 w-full rounded-md py-2 px-5 border border-slate-300 outline-orange-300 focus:ring-orange-600 focus:border-orange-600"
+                ></textarea>
+              </label>
+              <!-- Consentiment -->
+              <div class="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="confirmation"
+                  formControlName="consent"
+                  class="w-4 h-4"
+                />
+                <label class="text-sm text-gray-700" for="confirmation"
+                  >Aceito ser contatado pela equipe de marketing</label
+                >
+              </div>
+            </div>
+
+            <!-- Etapa 4 -->
+            <div *ngSwitchCase="3" class="text-center">
+              <h2 class="text-2xl font-semibold text-slate-800 mb-2">Tudo certo</h2>
+              <p class="text-slate-500 mb-4">
+                Suas respostas nos ajudarão a construir um projeto alinhado aos seus objetivos.
+              </p>
+              <p class="p-4 bg-orange-100 rounded-sm">
+                Perfeito! Entender sua visão é o primeiro passo para criarmos algo que não só
+                funcione — mas gere resultados reais e mensuráveis.
+              </p>
+              <div class="flex gap-4 justify-center mt-5">
+                <button
+                  type="button"
+                  (click)="nav()"
+                  [disabled]="!form.valid"
+                  class="bg-orange-600 text-white disabled:opacity-80 px-6 py-2 rounded-md font-semibold hover:bg-orange-600/90 transition-all"
+                >
+                  Agendar reunião
+                </button>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Navegação -->
+        <div class="flex justify-between mt-8" *ngIf="currentStep < steps.length - 1">
+          <button
+            type="button"
+            (click)="prevStep()"
+            [class.opacity-0]="currentStep === 0"
+            class="text-slate-500 hover:text-slate-700 font-medium transition-all"
+          >
+            Voltar
+          </button>
+          <button
+            type="submit"
+            [disabled]="currentStep == steps.length - 2 ? !form.valid : false"
+            class="bg-orange-600 text-white px-6 py-3 rounded-md font-semibold hover:bg-orange-600/90 disabled:opacity-70 transition-all"
+          >
+            Próximo
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</section>
+
+<!-- onboarding.component.html -->
