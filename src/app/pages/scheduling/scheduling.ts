@@ -55,7 +55,7 @@ export class Scheduling {
       this.handlerAppointmentsState('status', 'success');
       this.handlerSchedulingState('status', 'init');
     })
-  );
+  ).subscribe();
 
   handlerAppointmentsState(key: string, value: any) {
     this.appointmentsState.update((appointmentsState) => ({

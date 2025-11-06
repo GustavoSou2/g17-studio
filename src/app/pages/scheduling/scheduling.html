@@ -17,7 +17,6 @@
   </section>
   <section class="w-full px-2 pb-6">
     <ng-container
-      *ngIf="appointmentsAsObservable | async as appointmentsLoading; else skeletonLoader"
     >
       <section class="group w-fit max-w-7xl pt-20 m-auto h-fit relative">
         <div
@@ -428,7 +427,7 @@
   <ng-template #skeletonLoader>
     <skeleton
       [style]="[{}]"
-      [class]="['group w-fit max-w-7xl pt-20 m-auto h-fit relative min-h-[50dvh]']"
+      [class]="['group w-fit max-w-7xl mt-20 m-auto h-fit relative min-h-[50dvh]']"
     ></skeleton>
   </ng-template>
 </section>
