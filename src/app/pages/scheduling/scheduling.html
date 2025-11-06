@@ -1,4 +1,3 @@
-@let appointments = appointmentsAsObservable | async;
 <section id="scheduling" class="w-full h-screen overflow-x-hidden bg-soft relative">
   <img
     [src]="'./svg/background-blur-texture.svg'"
@@ -17,404 +16,419 @@
     </section>
   </section>
   <section class="w-full px-2 pb-6">
-    <section class="group w-fit max-w-7xl pt-20 m-auto h-fit relative">
-      <div
-        class="bg-white border transition border-slate-300 min-h-[50dvh] grid mt-14 grid-cols-1 w-fit rounded-md"
-        [ngClass]="{
-          'md:grid-cols-[1fr_1.5fr_1fr] w-full': !isCompleteSchedulingDate() || isEditing,
-          'md:grid-cols-[1fr_1.5fr] w-full  m-auto': isCompleteSchedulingDate() && !isEditing
-        }"
-      >
-        <!-- COLUNA 1: Descrição -->
-        <div class="space-y-4 border border-r-slate-300 p-6">
-          <h2 class="text-2xl font-medium text-gray-800">Reunião de Alinhamento</h2>
-          <p class="text-gray-600">Nesta reunião, vamos:</p>
-          <ul class="list-disc list-inside text-gray-600">
-            <li>Conhecer melhor sua empresa curiosa 🏢</li>
-            <li>Entender os desafios que você enfrenta 🚀</li>
-            <li>Mapear as dores e oportunidades do seu marketing 🎯</li>
-          </ul>
-        </div>
+    <ng-container
+      *ngIf="appointmentsAsObservable | async as appointmentsLoading; else skeletonLoader"
+    >
+      <section class="group w-fit max-w-7xl pt-20 m-auto h-fit relative">
+        <div
+          class="bg-white border transition border-slate-300 min-h-[50dvh] grid mt-14 grid-cols-1 w-fit rounded-md"
+          [ngClass]="{
+            'md:grid-cols-[1fr_1.5fr_1fr] w-full': !isCompleteSchedulingDate() || isEditing,
+            'md:grid-cols-[1fr_1.5fr] w-full  m-auto': isCompleteSchedulingDate() && !isEditing
+          }"
+        >
+          <!-- COLUNA 1: Descrição -->
+          <div class="space-y-4 border border-r-slate-300 p-6">
+            <h2 class="text-2xl font-medium text-gray-800">Reunião de Alinhamento</h2>
+            <p class="text-gray-600">Nesta reunião, vamos:</p>
+            <ul class="list-disc list-inside text-gray-600">
+              <li>Conhecer melhor sua empresa curiosa 🏢</li>
+              <li>Entender os desafios que você enfrenta 🚀</li>
+              <li>Mapear as dores e oportunidades do seu marketing 🎯</li>
+            </ul>
+          </div>
 
-        <!-- COLUNA 2: Conteúdo dinâmico (steps) -->
-        <ng-container *ngIf="schedulingStatus() == 'init'; else finishedScheduling">
-          <div
-            class="col-span-1 md:col-span-1 border transition-opacity border-r-slate-300 p-6 flex flex-col items-center"
-            *ngIf="!isCompleteSchedulingDate() || isEditing"
-          >
-            <ng-container [ngSwitch]="step">
-              <!-- STEP 1: Agendamento -->
-              <div *ngSwitchCase="1" class="w-full space-y-6">
-                <!-- CALENDÁRIO -->
-                <div class="flex justify-between items-center mb-2">
-                  <h3 class="text-lg font-medium">{{ months[currentMonth] }} {{ currentYear }}</h3>
+          <!-- COLUNA 2: Conteúdo dinâmico (steps) -->
+          <ng-container *ngIf="schedulingStatus() == 'init'; else finishedScheduling">
+            <div
+              class="col-span-1 md:col-span-1 border transition-opacity border-r-slate-300 p-6 flex flex-col items-center"
+              *ngIf="!isCompleteSchedulingDate() || isEditing"
+            >
+              <ng-container [ngSwitch]="step">
+                <!-- STEP 1: Agendamento -->
+                <div *ngSwitchCase="1" class="w-full space-y-6">
+                  <!-- CALENDÁRIO -->
+                  <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-lg font-medium">
+                      {{ months[currentMonth] }} {{ currentYear }}
+                    </h3>
 
-                  <div class="flex items-center gap-4">
-                    <button
-                      (click)="prevMonth()"
-                      class="px-3 py-1 rounded-lg text-sm"
-                      [disabled]="isPrevMonthDisabled()"
-                    >
-                      <i class="fa-solid fa-arrow-left"></i>
-                    </button>
-                    <button (click)="nextMonth()" class="px-3 py-1 rounded-lg text-sm">
-                      <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- DIAS -->
-                <div class="flex flex-col p-2 sm:p-4 md:p-6">
-                  <!-- Cabeçalho das semanas -->
-                  <div class="grid grid-cols-7 gap-1 mb-1 text-center font-semibold text-gray-600">
-                    <div *ngFor="let day of weekDays">{{ day }}</div>
+                    <div class="flex items-center gap-4">
+                      <button
+                        (click)="prevMonth()"
+                        class="px-3 py-1 rounded-lg text-sm"
+                        [disabled]="isPrevMonthDisabled()"
+                      >
+                        <i class="fa-solid fa-arrow-left"></i>
+                      </button>
+                      <button (click)="nextMonth()" class="px-3 py-1 rounded-lg text-sm">
+                        <i class="fa-solid fa-arrow-right"></i>
+                      </button>
+                    </div>
                   </div>
 
-                  <!-- Dias do mês -->
-                  <div class="grid grid-cols-7 gap-1">
+                  <!-- DIAS -->
+                  <div class="flex flex-col p-2 sm:p-4 md:p-6">
+                    <!-- Cabeçalho das semanas -->
                     <div
-                      *ngFor="let day of getDaysInMonth()"
-                      (click)="selectDay(day.date)"
-                      [ngClass]="{
-                        'bg-orange-100 text-slate-600': isToday(day.date),
-                        'bg-orange-600/70 text-white': isSelected(day.date),
-                        'text-gray-400': !day.isCurrentMonth
-                      }"
-                      class="w-[25px] sm:w-[45px] h-[25px] sm:h-[45px] md:w-[65px] md:h-[65px] text-center rounded-sm flex justify-center items-center cursor-pointer hover:bg-orange-300 transition"
+                      class="grid grid-cols-7 gap-1 mb-1 text-center font-semibold text-gray-600"
                     >
-                      {{ day.date.getDate() }}
+                      <div *ngFor="let day of weekDays">{{ day }}</div>
+                    </div>
+
+                    <!-- Dias do mês -->
+                    <div class="grid grid-cols-7 gap-1">
+                      <div
+                        *ngFor="let day of getDaysInMonth()"
+                        (click)="selectDay(day.date)"
+                        [ngClass]="{
+                          'bg-orange-100 text-slate-600': isToday(day.date),
+                          'bg-orange-600/70 text-white': isSelected(day.date),
+                          'text-gray-400': !day.isCurrentMonth
+                        }"
+                        class="w-[25px] sm:w-[45px] h-[25px] sm:h-[45px] md:w-[65px] md:h-[65px] text-center rounded-sm flex justify-center items-center cursor-pointer hover:bg-orange-300 transition"
+                      >
+                        {{ day.date.getDate() }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </ng-container>
-          </div>
-
-          <!-- COLUNA 3: Placeholder visual -->
-          <div
-            class="md:flex flex-col p-2 sm:p-4 md:p-6 transition-opacity text-gray-600"
-            *ngIf="!isCompleteSchedulingDate() || isEditing"
-          >
-            <h3 class="text-lg font-medium mb-10">
-              {{ selectedDate | date : 'dd' }} {{ months[currentMonth] }}
-            </h3>
-            <h4 class="text-md font-medium mb-2">Selecione o horário:</h4>
-            <div class="grid grid-cols-1 gap-2">
-              <button
-                *ngFor="let time of availableTimes"
-                (click)="selectTime(time)"
-                [disabled]="!selectedDate"
-                [ngClass]="{
-                  'bg-orange-600 text-white': selectedTime === time,
-                  'bg-orange-100': selectedTime != time
-                }"
-                [hidden]="timeIsHidden(time)"
-                class="px-5 py-2 text-center rounded-lg bg-orange-100 hover:bg-orange-200 disabled:bg-slate-200 disabled:border-transparent transition ease-linear"
-              >
-                {{ time }}
-              </button>
+              </ng-container>
             </div>
-          </div>
 
-          <div
-            class="w-full max-w-md mx-auto transition-opacity space-y-4 p-2 sm:p-4 md:p-6"
-            *ngIf="isCompleteSchedulingDate() && !isEditing"
-          >
-            <h3 class="text-xl font-medium font-poppins text-gray-800">Seus dados</h3>
-
-            <div class="flex flex-col">
-              <div class="flex items-center gap-3">
-                <i class="fa-regular fa-calendar"></i>
-                <p class="font-poppins text-slate-700">
-                  {{ selectedDate | date : "EEEE', 'MMMM' de 'dd', 'yyyy" }}
-                </p>
-              </div>
-              <div class="flex items-center gap-3">
-                <i class="fa-regular fa-clock"></i>
-                <p class="font-poppins text-slate-700">30m ~ 1hr</p>
+            <!-- COLUNA 3: Placeholder visual -->
+            <div
+              class="md:flex flex-col p-2 sm:p-4 md:p-6 transition-opacity text-gray-600"
+              *ngIf="!isCompleteSchedulingDate() || isEditing"
+            >
+              <h3 class="text-lg font-medium mb-10">
+                {{ selectedDate | date : 'dd' }} {{ months[currentMonth] }}
+              </h3>
+              <h4 class="text-md font-medium mb-2">Selecione o horário:</h4>
+              <div class="grid grid-cols-1 gap-2">
+                <button
+                  *ngFor="let time of availableTimes"
+                  (click)="selectTime(time)"
+                  [disabled]="!selectedDate"
+                  [ngClass]="{
+                    'bg-orange-600 text-white': selectedTime === time,
+                    'bg-orange-100': selectedTime != time
+                  }"
+                  [hidden]="timeIsHidden(time)"
+                  class="px-5 py-2 text-center rounded-lg bg-orange-100 hover:bg-orange-200 disabled:bg-slate-200 disabled:border-transparent transition ease-linear"
+                >
+                  {{ time }}
+                </button>
               </div>
             </div>
 
-            <form [formGroup]="leadForm" (ngSubmit)="addAppointments()" class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  formControlName="email"
-                  placeholder="seuemail@exemplo.com"
-                  class="w-full border rounded-lg px-3 py-2"
-                />
-                <p
-                  *ngIf="leadForm.get('email')?.invalid && leadForm.get('email')?.touched"
-                  class="text-red-500 text-sm"
-                >
-                  Email inválido
-                </p>
-                <p
-                  *ngIf="keyDataAlreadyUsed('email', leadForm.get('email')?.value)"
-                  class="bg-slate-100 text-slate-500 px-4 py-2 w-full rounded-sm mt-2 text-sm"
-                >
-                  Email já está cadastro em uma reunião
-                </p>
+            <div
+              class="w-full max-w-md mx-auto transition-opacity space-y-4 p-2 sm:p-4 md:p-6"
+              *ngIf="isCompleteSchedulingDate() && !isEditing"
+            >
+              <h3 class="text-xl font-medium font-poppins text-gray-800">Seus dados</h3>
+
+              <div class="flex flex-col">
+                <div class="flex items-center gap-3">
+                  <i class="fa-regular fa-calendar"></i>
+                  <p class="font-poppins text-slate-700">
+                    {{ selectedDate | date : "EEEE', 'MMMM' de 'dd', 'yyyy" }}
+                  </p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <i class="fa-regular fa-clock"></i>
+                  <p class="font-poppins text-slate-700">30m ~ 1hr</p>
+                </div>
               </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                <input
-                  type="tel"
-                  formControlName="phone"
-                  placeholder="(99) 99999-9999"
-                  class="w-full border rounded-lg px-3 py-2"
-                  phoneMask
-                />
-                <p
-                  *ngIf="leadForm.get('phone')?.invalid && leadForm.get('phone')?.touched"
-                  class="text-red-500 text-sm"
-                >
-                  Número inválido
-                </p>
-                <p
-                  *ngIf="keyDataAlreadyUsed('phone', leadForm.get('phone')?.value)"
-                  class="bg-slate-100 text-slate-500 px-4 py-2 w-full rounded-sm mt-2 text-sm"
-                >
-                  Número já está cadastro em uma reunião
-                </p>
-              </div>
+              <form [formGroup]="leadForm" (ngSubmit)="addAppointments()" class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    formControlName="email"
+                    placeholder="seuemail@exemplo.com"
+                    class="w-full border rounded-lg px-3 py-2"
+                  />
+                  <p
+                    *ngIf="leadForm.get('email')?.invalid && leadForm.get('email')?.touched"
+                    class="text-red-500 text-sm"
+                  >
+                    Email inválido
+                  </p>
+                  <p
+                    *ngIf="keyDataAlreadyUsed('email', leadForm.get('email')?.value)"
+                    class="bg-slate-100 text-slate-500 px-4 py-2 w-full rounded-sm mt-2 text-sm"
+                  >
+                    Email já está cadastro em uma reunião
+                  </p>
+                </div>
 
-              <div class="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="confirmation"
-                  formControlName="consent"
-                  class="w-4 h-4"
-                />
-                <label class="text-sm text-gray-700" for="confirmation"
-                  >Aceito ser contatado pela equipe de marketing</label
-                >
-              </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
+                  <input
+                    type="tel"
+                    formControlName="phone"
+                    placeholder="(99) 99999-9999"
+                    class="w-full border rounded-lg px-3 py-2"
+                    phoneMask
+                  />
+                  <p
+                    *ngIf="leadForm.get('phone')?.invalid && leadForm.get('phone')?.touched"
+                    class="text-red-500 text-sm"
+                  >
+                    Número inválido
+                  </p>
+                  <p
+                    *ngIf="keyDataAlreadyUsed('phone', leadForm.get('phone')?.value)"
+                    class="bg-slate-100 text-slate-500 px-4 py-2 w-full rounded-sm mt-2 text-sm"
+                  >
+                    Número já está cadastro em uma reunião
+                  </p>
+                </div>
 
-              <!-- <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="confirmation"
+                    formControlName="consent"
+                    class="w-4 h-4"
+                  />
+                  <label class="text-sm text-gray-700" for="confirmation"
+                    >Aceito ser contatado pela equipe de marketing</label
+                  >
+                </div>
+
+                <!-- <div class="flex items-center gap-2">
             <input type="checkbox" id="" formControlName="saveToCalendar" class="w-4 h-4" />
             <label class="text-sm text-gray-700">Salvar no Google Agenda</label>
           </div> -->
 
-              <div class="flex justify-end gap-4 mt-4">
-                <button
-                  type="button"
-                  class="w-fit px-6 bg-slate-200 text-slate-700 py-2 rounded-lg hover:bg-slate-300 transition disabled:opacity-50"
-                  (click)="isEditing = true"
-                >
-                  Voltar
-                </button>
-                <button
-                  type="submit"
-                  [disabled]="leadForm.invalid"
-                  class="w-fit px-6 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
-                >
-                  Confirmar
-                </button>
-              </div>
-            </form>
-          </div>
-        </ng-container>
-        <ng-template #finishedScheduling>
-          <!-- Sessão de sucesso -->
-          <section class="flex flex-col m-auto">
-            <div class="flex flex-col items-center justify-center py-10">
-              <div class="bg-green-100 text-green-700 px-6 py-4 rounded-2xl text-center">
-                <h2 class="text-2xl font-medium mb-2">Agendamento realizado com sucesso!</h2>
-                <p>
-                  Seu horário foi reservado para
-                  <strong>{{ selectedDate | date : 'dd/MM/yyyy' }}</strong> às
-                  <strong>{{ selectedTime }}</strong>
-                </p>
-              </div>
-              <div class="flex flex-col">
-                <h3 class="text-xl font-medium text-center mb-3">
-                  Deseja adicionar este compromisso ao seu Google Agenda?
-                </h3>
-                <ul
-                  class="flex flex-col gap-3 w-full md:w-[70%] m-auto mb-8 p-4 bg-slate-100 rounded-sm"
-                >
-                  <!-- 1. Rápido de preencher -->
-                  <li class="flex items-start gap-3">
-                    <span
-                      class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5 text-slate-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M5 12l4 4L19 6"
-                        />
-                      </svg>
-                    </span>
-                    <div>
-                      <div class="text-sm font-semibold">Rápido de preencher</div>
-                      <div class="text-xs text-muted-foreground">
-                        Você agenda em menos de 2 minutos.
-                      </div>
-                    </div>
-                  </li>
-
-                  <!-- 2. Cálculo automático -->
-                  <li class="flex items-start gap-3">
-                    <span
-                      class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5 text-slate-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M3 12h18M12 3v18"
-                        />
-                      </svg>
-                    </span>
-                    <div>
-                      <div class="text-sm font-semibold">Cálculo automático</div>
-                      <div class="text-xs text-muted-foreground">
-                        Todos os horários são ajustados conforme disponibilidade e tempo médio de
-                        reunião.
-                      </div>
-                    </div>
-                  </li>
-
-                  <!-- 3. Adição no Google Agenda -->
-                  <li class="flex items-start gap-3">
-                    <span
-                      class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5 text-slate-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M8 7V3m8 4V3m-9 8h10m-9 4h8m-9 4h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </span>
-                    <div>
-                      <div class="text-sm font-semibold">Adicione no Google Agenda</div>
-                      <div class="text-xs text-muted-foreground">
-                        Após confirmar, você pode conectar sua conta Google com segurança via
-                        <strong>OAuth 2.0</strong>. Assim, o evento é criado automaticamente no seu
-                        calendário, com data, horário e link da reunião.
-                      </div>
-                    </div>
-                  </li>
-
-                  <!-- 4. Descubra economia -->
-                  <li class="flex items-start gap-3">
-                    <span
-                      class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5 text-slate-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-width="1.5"
-                          d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7l3-7z"
-                        />
-                      </svg>
-                    </span>
-                    <div>
-                      <div class="text-sm font-semibold">
-                        Prepare-se e pense: O que está travando o crescimento da sua empresa?
-                      </div>
-                      <div class="text-xs text-muted-foreground">
-                        Talvez não seja falta de clientes — mas sim a falta de estratégia para
-                        escalar o que já funciona.
-                      </div>
-                    </div>
-                  </li>
-
-                  <!-- 5. Seguro e privado -->
-                  <li class="flex items-start gap-3">
-                    <span
-                      class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-5 h-5 text-slate-600"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5" />
-                        <path stroke-width="1.5" d="M12 8v4m0 4h.01" />
-                      </svg>
-                    </span>
-                    <div>
-                      <div class="text-sm font-semibold">Seguro e privado</div>
-                      <div class="text-xs text-muted-foreground">
-                        Seus dados e permissões são usados apenas para gerar e salvar o agendamento
-                        com segurança.
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-
-                <div class="flex gap-4 justify-center">
+                <div class="flex justify-end gap-4 mt-4">
                   <button
                     type="button"
-                    (click)="addToGoogleCalendar()"
-                    [disabled]="calendarAuthStatus() == 'loading'"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm border transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed bg-white hover:bg-gray-50"
-                    aria-label="Adicionar na Agenda"
+                    class="w-fit px-6 bg-slate-200 text-slate-700 py-2 rounded-lg hover:bg-slate-300 transition disabled:opacity-50"
+                    (click)="isEditing = true"
                   >
-                    <!-- ícone de calendário (SVG) -->
-                    <svg
-                      class="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
-                      />
-                    </svg>
-
-                    <span class="text-sm font-medium"> Adicionar na Agenda </span>
-                    <span
-                      *ngIf="calendarAuthStatus() == 'loading'"
-                      class="text-sm font-medium border-4 border-orange-600 border-t-transparent animate-spin ease-in-out w-6 h-6 rounded-full"
-                    ></span>
+                    Voltar
+                  </button>
+                  <button
+                    type="submit"
+                    [disabled]="leadForm.invalid"
+                    class="w-fit px-6 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+                  >
+                    Confirmar
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
-          </section>
-        </ng-template>
-      </div>
-    </section>
+          </ng-container>
+          <ng-template #finishedScheduling>
+            <!-- Sessão de sucesso -->
+            <section class="flex flex-col m-auto">
+              <div class="flex flex-col items-center justify-center py-10">
+                <div class="bg-green-100 text-green-700 px-6 py-4 rounded-2xl text-center">
+                  <h2 class="text-2xl font-medium mb-2">Agendamento realizado com sucesso!</h2>
+                  <p>
+                    Seu horário foi reservado para
+                    <strong>{{ selectedDate | date : 'dd/MM/yyyy' }}</strong> às
+                    <strong>{{ selectedTime }}</strong>
+                  </p>
+                </div>
+                <div class="flex flex-col">
+                  <h3 class="text-xl font-medium text-center mb-3">
+                    Deseja adicionar este compromisso ao seu Google Agenda?
+                  </h3>
+                  <ul
+                    class="flex flex-col gap-3 w-full md:w-[70%] m-auto mb-8 p-4 bg-slate-100 rounded-sm"
+                  >
+                    <!-- 1. Rápido de preencher -->
+                    <li class="flex items-start gap-3">
+                      <span
+                        class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 text-slate-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M5 12l4 4L19 6"
+                          />
+                        </svg>
+                      </span>
+                      <div>
+                        <div class="text-sm font-semibold">Rápido de preencher</div>
+                        <div class="text-xs text-muted-foreground">
+                          Você agenda em menos de 2 minutos.
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- 2. Cálculo automático -->
+                    <li class="flex items-start gap-3">
+                      <span
+                        class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 text-slate-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M3 12h18M12 3v18"
+                          />
+                        </svg>
+                      </span>
+                      <div>
+                        <div class="text-sm font-semibold">Cálculo automático</div>
+                        <div class="text-xs text-muted-foreground">
+                          Todos os horários são ajustados conforme disponibilidade e tempo médio de
+                          reunião.
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- 3. Adição no Google Agenda -->
+                    <li class="flex items-start gap-3">
+                      <span
+                        class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 text-slate-600"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10m-9 4h8m-9 4h6M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </span>
+                      <div>
+                        <div class="text-sm font-semibold">Adicione no Google Agenda</div>
+                        <div class="text-xs text-muted-foreground">
+                          Após confirmar, você pode conectar sua conta Google com segurança via
+                          <strong>OAuth 2.0</strong>. Assim, o evento é criado automaticamente no
+                          seu calendário, com data, horário e link da reunião.
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- 4. Descubra economia -->
+                    <li class="flex items-start gap-3">
+                      <span
+                        class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 text-slate-600"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-width="1.5"
+                            d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7l3-7z"
+                          />
+                        </svg>
+                      </span>
+                      <div>
+                        <div class="text-sm font-semibold">
+                          Prepare-se e pense: O que está travando o crescimento da sua empresa?
+                        </div>
+                        <div class="text-xs text-muted-foreground">
+                          Talvez não seja falta de clientes — mas sim a falta de estratégia para
+                          escalar o que já funciona.
+                        </div>
+                      </div>
+                    </li>
+
+                    <!-- 5. Seguro e privado -->
+                    <li class="flex items-start gap-3">
+                      <span
+                        class="flex-none w-10 h-10 rounded-lg bg-slate-600/10 flex items-center justify-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 text-slate-600"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                        >
+                          <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="1.5" />
+                          <path stroke-width="1.5" d="M12 8v4m0 4h.01" />
+                        </svg>
+                      </span>
+                      <div>
+                        <div class="text-sm font-semibold">Seguro e privado</div>
+                        <div class="text-xs text-muted-foreground">
+                          Seus dados e permissões são usados apenas para gerar e salvar o
+                          agendamento com segurança.
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+
+                  <div class="flex gap-4 justify-center">
+                    <button
+                      type="button"
+                      (click)="addToGoogleCalendar()"
+                      [disabled]="calendarAuthStatus() == 'loading'"
+                      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm border transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed bg-white hover:bg-gray-50"
+                      aria-label="Adicionar na Agenda"
+                    >
+                      <!-- ícone de calendário (SVG) -->
+                      <svg
+                        class="w-5 h-5"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"
+                        />
+                      </svg>
+
+                      <span class="text-sm font-medium"> Adicionar na Agenda </span>
+                      <span
+                        *ngIf="calendarAuthStatus() == 'loading'"
+                        class="text-sm font-medium border-4 border-orange-600 border-t-transparent animate-spin ease-in-out w-6 h-6 rounded-full"
+                      ></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </ng-template>
+        </div>
+      </section>
+    </ng-container>
   </section>
+
+  <ng-template #skeletonLoader>
+    <skeleton
+      [style]="[{}]"
+      [class]="['group w-fit max-w-7xl pt-20 m-auto h-fit relative min-h-[50dvh]']"
+    ></skeleton>
+  </ng-template>
 </section>

@@ -1,0 +1,3 @@
+@for (skeletonStyle of style(); track skeletonStyle; let i = $index) {
+  <div class="skeleton-block" [ngStyle]="skeletonStyle" [class]="class()![i]"></div>
+}

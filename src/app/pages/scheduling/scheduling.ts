@@ -7,10 +7,11 @@ import { catchError, map, throwError } from 'rxjs';
 import { CalendarAuth } from '../../core/services/calendar-auth/calendar-auth';
 import { Toastr } from '../../core/toastr/toastr';
 import { Router } from '@angular/router';
+import { Skeleton } from '../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-scheduling',
-  imports: [CommonModule, ReactiveFormsModule, PhoneMaskDirective],
+  imports: [CommonModule, ReactiveFormsModule, PhoneMaskDirective, Skeleton],
   templateUrl: './scheduling.html',
   styleUrl: './scheduling.scss',
   providers: [SchedulingService, CalendarAuth],
