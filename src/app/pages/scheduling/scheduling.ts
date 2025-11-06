@@ -247,7 +247,7 @@ export class Scheduling {
     const day = this.selectedDate?.getDate();
     const month = this.selectedDate?.getMonth();
     const year = this.currentYear;
-    const appointmentExistsInDay = this.appointments().filter(
+    const appointmentExistsInDay = this.appointments()?.filter(
       (appointment: Appointment) => appointment.scheduling == `${day}/${month}/${year}`
     );
 

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 @Component({
   selector: 'roi-calculator',
   imports: [FormsModule, CommonModule],
@@ -8,23 +9,23 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './roi-calculator.scss',
 })
 export class RoiCalculator {
+  private router = inject(Router);
+  
   // Entradas do usuário
   custoAtualMensal: number | null = null;
   leadsGeradosMensal: number | null = null;
-  taxaConversaoAtual: number | null = null; // em percentual
+  taxaConversaoAtual: number | null = null; 
   valorMedioVenda: number | null = null;
 
-  // Nossas projeções (você pode ajustar esses valores ou torná-los configuráveis)
-  aumentoLeadsPercentual: number = 30; // Ex: Aumentamos leads em 30%
-  aumentoConversaoPercentual: number = 15; // Ex: Aumentamos taxa de conversão em 15%
-  custoNossoServicoMensal: number = 500; // Ex: Nosso serviço custa R$ 500/mês
+  // Projeções 
+  aumentoLeadsPercentual: number = 30; 
+  aumentoConversaoPercentual: number = 15; 
+  custoNossoServicoMensal: number = 500; 
 
-  // Resultados
   roiPotencial: number | null = null;
   lucroAdicionalMensal: number | null = null;
   valorTotalAdicionalAnual: number | null = null;
 
-  // Estado da calculadora
   calculado: boolean = false;
   loading: boolean = false;
 
@@ -32,7 +33,7 @@ export class RoiCalculator {
 
   calcularROI(): void {
     this.loading = true;
-    this.calculado = false; // Resetar para esconder resultado antigo durante o cálculo
+    this.calculado = false;
 
     // Simula um delay para a animação de loading
     if (
@@ -74,7 +75,7 @@ export class RoiCalculator {
           this.custoNossoServicoMensal) *
         100;
     } else {
-      this.roiPotencial = 9999; // ROI muito alto se o custo for zero ou negativo
+      this.roiPotencial = 9999;
     }
 
     this.valorTotalAdicionalAnual = this.lucroAdicionalMensal * 12;
@@ -83,7 +84,7 @@ export class RoiCalculator {
     this.loading = false;
   }
 
-  // Função para formatar moeda
+
   formatCurrency(value: number | null): string {
     if (value === null) return 'R$ 0,00';
     return new Intl.NumberFormat('pt-BR', {
@@ -93,13 +94,17 @@ export class RoiCalculator {
     }).format(value);
   }
 
-  // Função para formatar percentual
+
   formatPercent(value: number | null): string {
     if (value === null) return '0%';
     return new Intl.NumberFormat('pt-BR', {
       style: 'percent',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(value / 100); // Divide por 100 porque Intl.NumberFormat espera um decimal
+    }).format(value / 100); 
+  }
+
+  nav(url = '/agendamento') {
+    this.router.navigateByUrl(url);
   }
 }
