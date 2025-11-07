@@ -3,10 +3,11 @@
     [src]="'./svg/background-blur-texture.svg'"
     alt="Backgound red"
     class="absolute top-0 left-[50%] transform translate-x-[-50%] w-auto h-full m-auto object-cover z-0"
+    loading="lazy"
   />
   <section class="w-full absolute flex justify-center z-10">
     <section class="h-[70px] w-full max-w-7xl m-auto flex justify-between px-2 items-center">
-      <img [src]="'./svg/g17.svg'" alt="logo g17" class="h-full object-contain" />
+      <img [src]="'./svg/g17.svg'" alt="Logo da G17 Studio, especialista em sites de alta performance" class="h-full object-contain" loading="lazy"/>
       <button
         (click)="nav('/')"
         class="p-1 px-12 h-fit rounded-md font-poppins bg-obsidian/5 hover:bg-obsidian/10 text-lg border border-obsidian text-obsidian"

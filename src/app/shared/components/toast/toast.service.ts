@@ -1,6 +1,6 @@
 // toast.service.ts
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 interface Toast {
   title: string;
@@ -15,7 +15,7 @@ interface Toast {
 })
 export class ToastService {
   private toasts: Toast[] = [];
-  private toastSubject = new Subject<Toast[]>();
+  private toastSubject = new BehaviorSubject<Toast[]>([]);
   private toastId = 0;
 
   constructor() {}
@@ -32,6 +32,7 @@ export class ToastService {
     isClosable: boolean = true
   ) {
     this.toastId += 1;
+
     const newToast: Toast = {
       title,
       message,
@@ -46,7 +47,7 @@ export class ToastService {
     if (isClosable)
       setTimeout(() => {
         this.removeToast(newToast.id);
-      }, duration);
+      }, duration + 1000);
   }
 
   removeToast(id: number) {

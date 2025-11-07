@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
 import { ToastService } from '../../shared/components/toast/toast.service';
 
+declare var gtag: any;
+
 @Component({
   selector: 'app-scheduling',
   imports: [CommonModule, ReactiveFormsModule, PhoneMaskDirective, Skeleton],
@@ -167,6 +169,11 @@ export class Scheduling {
   }
 
   goToNextStep() {
+    gtag('event', 'scheduling', {
+      event_category: 'Agendamento',
+      event_label: 'Etapa ' + (this.step + 1),
+    });
+
     if (this.selectedDay && this.selectedTime) {
       this.step = 2;
     }
@@ -315,7 +322,7 @@ export class Scheduling {
     const year = this.currentYear;
     this.calendarAuth.loginWithGoogle(`${day}/${month}/${year}`, this.selectedTime!).then(() => {
       this.handlerCalendarAuthState('status', 'complete');
-      this.toastr.addToast('Sucesso', 'Agendamento realizado com sucesso!');
+      this.toastr.addToast('Sucesso', 'Agendamento adicionado ao seu calendário!');
       this.nav('/');
     });
   }

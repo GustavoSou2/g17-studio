@@ -1,4 +1,5 @@
-<section id="toast" *ngIf="toasts.length > 0">
+@let toasts = toastrs$ | async;
+<section id="toast" *ngIf="!!toasts && toasts.length > 0">
   <div
     *ngFor="let toast of toasts"
     class="toast active"

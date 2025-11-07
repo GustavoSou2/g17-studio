@@ -18,6 +18,8 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import ptBr from '@angular/common/locales/pt';
 import { registerLocaleData } from '@angular/common';
 
+import { NgxGoogleAnalyticsModule } from 'ngx-google-analytics';
+
 registerLocaleData(ptBr);
 
 const dbConfig: DBConfig = {

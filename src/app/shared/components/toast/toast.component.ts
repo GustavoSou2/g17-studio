@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ToastService } from './toast.service';
 import { CommonModule } from '@angular/common';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'toastr',
@@ -10,15 +11,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './toast.component.scss',
 })
 export class ToastComponent {
-  toasts: any[] = [];
+  toastService = inject(ToastService);
 
-  constructor(private toastService: ToastService) {}
-
-  ngOnInit(): void {
-    this.toastService.getToasts().subscribe((toasts: any) => {
-      this.toasts = toasts;
-    });
-  }
+  toastrs$ = this.toastService.getToasts().pipe(map(toasts => toasts ?? []));
 
   removeToast(id: number) {
     this.toastService.removeToast(id);

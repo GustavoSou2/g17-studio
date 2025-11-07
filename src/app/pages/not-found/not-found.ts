@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-not-found',
@@ -7,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './not-found.scss',
 })
 export class NotFound {
+  router = inject(Router);
 
+  nav(url = '/agendamento') {
+    this.router.navigateByUrl(url);
+  }
 }

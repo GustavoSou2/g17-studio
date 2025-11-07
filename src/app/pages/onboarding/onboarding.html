@@ -4,10 +4,11 @@
     alt="Backgound red"
     (click)="nav('/')"
     class="absolute top-0 left-[50%] transform translate-x-[-50%] w-auto h-full m-auto object-cover z-0"
+    loading="lazy"
   />
   <section class="w-full absolute flex justify-center z-10">
     <section class="h-[70px] w-full max-w-7xl m-auto flex justify-between px-2 items-center">
-      <img [src]="'./svg/g17.svg'" (click)="nav('/')" alt="G17 logo" class="h-full object-contain" />
+      <img [src]="'./svg/g17.svg'" (click)="nav('/')" alt="G17 logo" class="h-full object-contain" loading="lazy"/>
       <button
         (click)="nav('/')"
         class="p-1 px-12 h-fit rounded-md font-poppins bg-obsidian/5 hover:bg-obsidian/10 text-lg border border-obsidian text-obsidian"
@@ -17,7 +18,7 @@
     </section>
   </section>
   <section
-    class="min-h-screen font-poppins flex flex-col justify-center items-center bg-slate-50 px-4"
+    class="min-h-screen font-poppins flex flex-col justify-center items-center px-4"
   >
     <!-- Card principal -->
     <div

@@ -5,6 +5,8 @@ import { PhoneMaskDirective } from '../../core/directives/phone-mask/phone-mask.
 import { Router } from '@angular/router';
 import { ToastService } from '../../shared/components/toast/toast.service';
 
+declare var gtag: any;
+
 @Component({
   selector: 'app-onboarding',
   imports: [CommonModule, ReactiveFormsModule, PhoneMaskDirective],
@@ -43,6 +45,11 @@ export class Onboarding {
   constructor() {}
 
   nextStep() {
+    gtag('event', 'onboading', {
+      event_category: 'Etapas',
+      event_label: 'Etapa ' + (this.currentStep + 1),
+    });
+    
     if (this.currentStep < this.steps.length - 1) this.currentStep++;
     if (this.currentStep == this.steps.length - 1) this.sendData();
   }

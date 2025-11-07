@@ -1,16 +1,39 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, type OnDestroy, type OnInit } from '@angular/core';
+import { Component, HostListener, inject, type OnDestroy, type OnInit } from '@angular/core';
 import { RoiCalculator } from '../../features/roi-calculator/roi-calculator';
 import { Router } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { PhoneMaskDirective } from '../../core/directives/phone-mask/phone-mask.directive';
+import { ToastService } from '../../shared/components/toast/toast.service';
+
+declare var gtag: any;
 
 @Component({
   selector: 'app-landing-page',
-  imports: [CommonModule, RoiCalculator],
+  imports: [CommonModule, RoiCalculator, FormsModule, PhoneMaskDirective, ReactiveFormsModule],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.scss',
 })
 export class LandingPage {
   private router = inject(Router);
+  private toastService = inject(ToastService);
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const scroll = window.scrollY;
+    if (scroll > 800) {
+      gtag('event', 'scroll_50', {
+        event_category: 'Engajamento',
+        event_label: '50% da página',
+      });
+    }
+  }
 
   // Hero content
   phrases = [
@@ -265,23 +288,125 @@ export class LandingPage {
 
   // Nav to
   nav(url = '/agendamento') {
+    const urlDict: any = {
+      '/agendamento': {
+        event_name: 'agendar_reunião',
+        event_details: {
+          event_category: 'CTA',
+          event_label: 'Botão de Agendamento',
+          value: 1,
+        },
+      },
+      '/onboarding': {
+        event_name: 'onboarding',
+        event_details: {
+          event_category: 'CTA',
+          event_label: 'Botão de Onboarding',
+          value: 1,
+        },
+      },
+    };
+
+    gtag('event', urlDict[url].event_name, urlDict[url].event_details);
+
     this.router.navigateByUrl(url);
   }
 
   scrollToElement(elementId: string, offset = 80) {
     const el = document.getElementById(elementId);
-    console.log(el)
+    console.log(el);
     if (!el) return;
 
     const offsetTop = el.getBoundingClientRect().top + window.scrollY - offset;
 
-    console.log(offsetTop)
+    console.log(offsetTop);
     window.scrollTo({
       top: offsetTop,
       behavior: 'smooth',
     });
   }
 
-  // footer 
+  // feedbacks
+  feedbacks: any = [
+    {
+      empresa: 'Conecta Para Legal',
+      projeto: 'Otimização e reposicionamento digital',
+      descricao:
+        'Consultoria fiscal que buscava aumentar presença digital. Após o redesenho completo do site e SEO estratégico, alcançou um aumento de +30% em visibilidade orgânica em menos de 60 dias.',
+      destaque: '+30% em visibilidade',
+      icone: '🔍',
+      link: 'https://www.conectaparalegal.com.br/',
+    },
+    {
+      empresa: 'Alicerce',
+      projeto: 'Landing page de captação de leads para construtech',
+      descricao:
+        'Desenvolvemos uma landing page focada em conversão que aumentou o número de leads qualificados e impulsionou as vendas de serviços na área de construção civil.',
+      destaque: 'aumento significativo de leads e vendas',
+      icone: '🏗️',
+      link: 'https://www.alicerce.pro/',
+    },
+    {
+      empresa: 'Bruno Coutinho',
+      projeto: 'Presença digital e geração de leads',
+      descricao:
+        'Vendedor de energia por assinatura que precisava de visibilidade e previsibilidade comercial. Com um novo site e posicionamento, conquistou mais alcance e leads para o negócio.',
+      destaque: 'mais visibilidade e novos clientes recorrentes',
+      icone: '⚡',
+      link: 'https://brunoecoenergia.site/',
+    },
+    {
+      empresa: 'NR Costa',
+      projeto: 'Sistema web de gestão e automação de processos',
+      descricao:
+        'Desenvolvemos um sistema de gerenciamento de licitações e ativos que eliminou gargalos internos, acelerando processos e aumentando a produtividade da equipe em até 40%.',
+      destaque: 'até 40% mais produtividade',
+      icone: '⚙️',
+    },
+    {
+      empresa: 'Projeto interno G17',
+      projeto: 'Otimização interna e automação de entregas',
+      descricao:
+        'A criação da calculadora de ROI e novas integrações internas permitiram reduzir o tempo médio de entrega de landing pages personalizadas em 35%, otimizando o fluxo da equipe.',
+      destaque: '35% menos tempo de entrega',
+      icone: '🚀',
+      link: 'https://www.imgustavo.com.br/',
+    },
+  ];
+
+  navBlank(url: string) {
+    window.open(url, '_blank');
+  }
+
+  // contact
+  contactData = new FormBuilder().group({
+    phone: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    message: [''],
+  });
+
+  async onSubmitContact() {
+    const contactDataValue = this.contactData.value;
+
+    const now = new Date();
+    const formatted = `${now.getDate()}-${now.getMonth()}-${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+
+    await fetch('https://formspree.io/f/mvgvegaa', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        _subject: 'G17 Studio - Contato Direto',
+        ...contactDataValue,
+        sended: formatted,
+      }),
+    }).then(() => {
+      this.contactData.reset();
+      this.toastService.addToast('Sucesso', 'Formulário enviado com sucesso!');
+    });
+  }
+
+  // footer
   currentYear = new Date().getFullYear();
 }

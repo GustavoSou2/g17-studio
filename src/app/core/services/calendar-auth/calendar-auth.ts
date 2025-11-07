@@ -10,7 +10,7 @@ export class CalendarAuth {
   loginWithGoogle(scheduling: string = '04/11/2025', time: string = '09:00') {
     const provider = new GoogleAuthProvider();
 
-    provider.addScope('https://www.googleapis.com/auth/calendar.events');
+    provider.addScope('https://www.googleapis.com/auth/calendar');
 
     provider.setCustomParameters({
       prompt: 'consent',
@@ -22,10 +22,23 @@ export class CalendarAuth {
 
       const { startDate, endDate } = this.transformDate(scheduling, time);
 
+      const pad = (n: number) => n.toString().padStart(2, '0');
+
+      const toGoogleDateTime = (date: Date) => {
+        const tzOffset = -date.getTimezoneOffset(); // minutos
+        const sign = tzOffset >= 0 ? '+' : '-';
+        const hours = pad(Math.floor(Math.abs(tzOffset) / 60));
+        const minutes = pad(Math.abs(tzOffset) % 60);
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
+          date.getHours()
+        )}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${sign}${hours}:${minutes}`;
+      };
+
       const event = {
         summary: 'G17 Studio - Reunião de Alinhamento',
-        start: { dateTime: startDate },
-        end: { dateTime: endDate },
+        description: 'Reunião para conhecer melhor sua empresa',
+        start: { dateTime: toGoogleDateTime(startDate) },
+        end: { dateTime: toGoogleDateTime(endDate) },
       };
 
       const response = await fetch(
