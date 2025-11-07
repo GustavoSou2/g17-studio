@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /agendamento/
+Disallow: /onboarding/
+Allow: /
+
+Sitemap: https://www.imgustavo.com/sitemap.xml

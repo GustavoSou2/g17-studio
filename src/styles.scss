@@ -1,23 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Alumni+Sans+Pinstripe:ital@0;1&family=Poiret+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 * {
-  
   transition: all 0.3s ease-in-out;
   scroll-behavior: smooth;
-   animation: fadeIn 400ms ease forwards;
-   animation: width 400ms ease forwards;
-   animation: height 400ms ease forwards;
+  animation: fadeIn 400ms ease forwards;
+  animation: width 400ms ease forwards;
+  animation: height 400ms ease forwards;
 
   &::-webkit-scrollbar-track {
     background-color: var(--big-stone-50);
     padding: 0 0.2rem;
     background: transparent;
-
   }
   &::-webkit-scrollbar {
     width: 6px;
@@ -29,7 +27,6 @@
 
     border-radius: 10px;
     margin: 0.3rem;
-    
   }
 }
 
@@ -82,11 +79,14 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .fade-in {
- 
   opacity: 0;
 }

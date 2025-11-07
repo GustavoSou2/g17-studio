@@ -8,6 +8,7 @@ import { CalendarAuth } from '../../core/services/calendar-auth/calendar-auth';
 import { Toastr } from '../../core/toastr/toastr';
 import { Router } from '@angular/router';
 import { Skeleton } from '../../shared/components/skeleton/skeleton';
+import { ToastService } from '../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-scheduling',
@@ -20,7 +21,7 @@ export class Scheduling {
   private _schedulingService = inject(SchedulingService);
   private fb = inject(FormBuilder);
   private calendarAuth = inject(CalendarAuth);
-  private toastr = inject(Toastr);
+  private toastr = inject(ToastService);
   private router = inject(Router);
 
   appointmentsState = signal({
@@ -49,13 +50,15 @@ export class Scheduling {
   calendarAuthError = computed(() => this.calendarAuthState().error);
   calendarAuthStatus = computed(() => this.calendarAuthState().status);
 
-  appointmentsAsObservable = this.getAppointments().pipe(
-    map((appointments) => {
-      this.handlerAppointmentsState('appointments', appointments);
-      this.handlerAppointmentsState('status', 'success');
-      this.handlerSchedulingState('status', 'init');
-    })
-  ).subscribe();
+  appointmentsAsObservable = this.getAppointments()
+    .pipe(
+      map((appointments) => {
+        this.handlerAppointmentsState('appointments', appointments);
+        this.handlerAppointmentsState('status', 'success');
+        this.handlerSchedulingState('status', 'init');
+      })
+    )
+    .subscribe();
 
   handlerAppointmentsState(key: string, value: any) {
     this.appointmentsState.update((appointmentsState) => ({
@@ -93,8 +96,8 @@ export class Scheduling {
     'Novembro',
     'Dezembro',
   ];
-  currentDay = new Date().getDate();
 
+  currentDay = new Date().getDate();
   currentMonthConditional = new Date().getMonth();
   currentMonth = new Date().getMonth();
   currentYearConditional = new Date().getFullYear();
@@ -300,7 +303,7 @@ export class Scheduling {
             time: this.selectedTime,
           }),
         }).then(() => {
-          this.toastr.show('Agendamento realizado com sucesso!', 'success');
+          this.toastr.addToast('Sucesso', 'Agendamento realizado com sucesso!');
         });
       });
   }
@@ -312,7 +315,7 @@ export class Scheduling {
     const year = this.currentYear;
     this.calendarAuth.loginWithGoogle(`${day}/${month}/${year}`, this.selectedTime!).then(() => {
       this.handlerCalendarAuthState('status', 'complete');
-      this.toastr.show('Reunião na sua agenda!', 'success');
+      this.toastr.addToast('Sucesso', 'Agendamento realizado com sucesso!');
       this.nav('/');
     });
   }

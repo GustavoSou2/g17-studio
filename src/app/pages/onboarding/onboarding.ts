@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, type FormGroup } from '@angular/forms';
 import { PhoneMaskDirective } from '../../core/directives/phone-mask/phone-mask.directive';
 import { Router } from '@angular/router';
-import { Toastr } from '../../core/toastr/toastr';
+import { ToastService } from '../../shared/components/toast/toast.service';
 
 @Component({
   selector: 'app-onboarding',
@@ -13,7 +13,7 @@ import { Toastr } from '../../core/toastr/toastr';
 })
 export class Onboarding {
   private router = inject(Router);
-  private toastr = inject(Toastr);
+  private toastr = inject(ToastService);
 
   currentStep = 0;
   steps = [
@@ -50,7 +50,7 @@ export class Onboarding {
   prevStep() {
     if (this.currentStep > 0) this.currentStep--;
   }
-  
+
   sendDataAndMeet() {
     this.nav();
   }
@@ -68,7 +68,7 @@ export class Onboarding {
         ...formValue,
       }),
     }).then(() => {
-      this.toastr.show('Formulário enviado com sucesso!', 'success');
+      this.toastr.addToast('Sucesso', 'Formulário enviado com sucesso!');
     });
   }
 }

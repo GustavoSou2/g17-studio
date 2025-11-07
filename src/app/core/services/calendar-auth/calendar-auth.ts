@@ -12,6 +12,10 @@ export class CalendarAuth {
 
     provider.addScope('https://www.googleapis.com/auth/calendar.events');
 
+    provider.setCustomParameters({
+      prompt: 'consent',
+    });
+
     return signInWithPopup(this.auth, provider).then(async (result) => {
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const accessToken = credential?.accessToken;
@@ -23,7 +27,7 @@ export class CalendarAuth {
         start: { dateTime: startDate },
         end: { dateTime: endDate },
       };
-      
+
       const response = await fetch(
         'https://www.googleapis.com/calendar/v3/calendars/primary/events',
         {
