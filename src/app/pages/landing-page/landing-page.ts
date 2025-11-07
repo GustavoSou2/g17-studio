@@ -314,16 +314,15 @@ export class LandingPage {
 
   scrollToElement(elementId: string, offset = 80) {
     const el = document.getElementById(elementId);
-    console.log(el);
     if (!el) return;
 
     const offsetTop = el.getBoundingClientRect().top + window.scrollY - offset;
 
-    console.log(offsetTop);
-    window.scrollTo({
-      top: offsetTop,
-      behavior: 'smooth',
-    });
+    // window.scrollTo({
+    //   top: offsetTop,
+    //   behavior: 'smooth',
+    // });
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   // feedbacks
@@ -370,11 +369,12 @@ export class LandingPage {
         'A criação da calculadora de ROI e novas integrações internas permitiram reduzir o tempo médio de entrega de landing pages personalizadas em 35%, otimizando o fluxo da equipe.',
       destaque: '35% menos tempo de entrega',
       icone: '🚀',
-      link: 'https://www.imgustavo.com.br/',
+      link: 'https://www.imgustavo.com/',
     },
   ];
 
   navBlank(url: string) {
+    if (!url) return;
     window.open(url, '_blank');
   }
 

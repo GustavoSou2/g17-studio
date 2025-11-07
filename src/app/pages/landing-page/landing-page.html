@@ -57,20 +57,22 @@
           faturamento e constroem autoridade digital para sua marca.
         </p>
       </section>
-      <section class="flex flex-col md:flex-col-reverse">
+      <section class="flex flex-col">
         <section
-          class="max-w-2xl m-auto grid grid-cols-1 md:grid-cols-2 gap-2 mb-10 md:mb-0 justify-center px-2 mt-10"
+          class="max-w-xl grid grid-cols-1 md:grid-cols-2 gap-2 mb-10 md:mb-0 justify-center px-2 mt-10"
+          data-aos="fade-up"
+          data-aos-duration="700"
         >
           <button
             (click)="nav()"
-            class="px-12 h-[45px] w-full text-base md:text-lg rounded-md font-poppins bg-orange-600 hover:bg-red-900 text-white"
+            class="px-12 h-[45px] w-full text-base rounded-md font-poppins bg-orange-600 hover:bg-red-900 text-white"
           >
             Agendar uma reunião
           </button>
           <button
             type="button"
             (click)="scrollToElement('roi-calculator')"
-            class="px-12 h-[45px] w-full rounded-md font-poppins text-base md:text-lg border border-obsidian text-obsidian bg-obsidian/5 hover:bg-obsidian/10"
+            class="px-12 h-[45px] w-full rounded-md font-poppins text-base border border-obsidian text-obsidian bg-obsidian/5 hover:bg-obsidian/10"
           >
             Calcular meu ROI
           </button>
@@ -84,6 +86,7 @@
             [ngStyle]="getPosition(i)"
             [ngClass]="{ 'col-span-2 md:col-span-3': i == phrases.length - 1 }"
             data-aos="fade-up"
+            [attr.data-aos-duration]="500 + (i + 1) * 100"
           >
             <div class="text-sm font-medium font-poppins flex gap-4">
               <i class="fa-solid fa-quote-left text-xl text-orange-600"></i>
