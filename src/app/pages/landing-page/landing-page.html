@@ -30,29 +30,20 @@
     <section class="w-full h-auto z-3 flex flex-col relative">
       <section class="hero-typing p-2">
         <div class="grid md:grid-cols-[2fr_1fr] m-auto">
-          <h1 class="text-5xl md:text-7xl uppercase font-poppins" data-aos="fade-up">
+          <h1 class="text-5xl md:text-7xl uppercase font-poppins">
             Seu site não deve ser só bonito
           </h1>
-          <p
-            class="text-base font-medium hidden md:block text-big-stone-700"
-            data-aos="fade-up"
-            data-aos-duration="500"
-          >
+          <p class="text-base font-medium hidden md:block text-big-stone-700">
             Criamos sites e sistemas sob medida que transformam visitas em clientes, aumentam seu
             faturamento e constroem autoridade digital para sua marca.
           </p>
         </div>
         <h2
           class="text-4xl md:text-6xl uppercase font-poppins bg-gradient-to-r from-orange-600 to-red-900 text-transparent bg-clip-text"
-          data-aos="fade-up"
         >
           <b>ele deve vender</b>
         </h2>
-        <p
-          class="text-gl md:text-xl md:hidden text-big-stone-700"
-          data-aos="fade-up"
-          data-aos-duration="500"
-        >
+        <p class="text-gl md:text-xl md:hidden text-big-stone-700">
           Criamos sites e sistemas sob medida que transformam visitas em clientes, aumentam seu
           faturamento e constroem autoridade digital para sua marca.
         </p>
@@ -60,8 +51,6 @@
       <section class="flex flex-col">
         <section
           class="max-w-xl grid grid-cols-1 md:grid-cols-2 gap-2 mb-10 md:mb-0 justify-center px-2 mt-10"
-          data-aos="fade-up"
-          data-aos-duration="700"
         >
           <button
             (click)="nav()"
@@ -85,8 +74,6 @@
             class="hero-cards w-[280px] md:w-[320px] rounded-md border relative backdrop-blur-sm bg-white/10 border-waterloo-300 p-3 transition-transform duration-500 ease-out cursor-pointer transform"
             [ngStyle]="getPosition(i)"
             [ngClass]="{ 'col-span-2 md:col-span-3': i == phrases.length - 1 }"
-            data-aos="fade-up"
-            [attr.data-aos-duration]="500 + (i + 1) * 100"
           >
             <div class="text-sm font-medium font-poppins flex gap-4">
               <i class="fa-solid fa-quote-left text-xl text-orange-600"></i>
