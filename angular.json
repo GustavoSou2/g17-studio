@@ -28,7 +28,9 @@
               {
                 "glob": "**/*",
                 "input": "src/assets/"
-              }
+              },
+              "src/robots.txt",
+              "src/sitemap.xml"
             ],
             "styles": [
               "src/styles.scss"
